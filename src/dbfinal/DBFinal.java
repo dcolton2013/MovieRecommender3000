@@ -21,31 +21,18 @@ public class DBFinal {
      * @param args the command line arguments
      */
 
-  private static final String url = "jdbc:mysql://localhost:3306/movieRecommender3000?useSSL=false";
-	private static final String user = "root";
-	private static final String password = "*";
+  private static final String url = "jdbc:mysql://localhost:3306/movieRecommender3000?useSSL=false";    
+  private static final String user = "root";
+  private static final String password = "drc_DB2016";
 
   private static Connection conn;
   private static Statement stmt;
   private static ResultSet rs;
   private static String query;
   private static BufferedReader br;
-
+  private static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args)throws SQLException, IOException, ClassNotFoundException {
-//        String str = "hel'ooo";
-//        int strc = str.indexOf("'");
-//        System.out.println(str);
-//        System.out.println(strc);
-//         str = str.substring(0, strc) + "''"+str.substring(4);
-//        System.out.println(str);
-        // opening database connection to MySQL server
-//        br = new BufferedReader(new FileReader("movies.dat"));
-//        String[] arr = br.readLine().split("\t");
-//        for (String a:arr)
-//            System.out.println(a);
-//        System.exit(0);
-
         Class.forName("com.mysql.jdbc.Driver");
         conn = DriverManager.getConnection(url, user, password);
         System.out.println("Database connected successfully");
@@ -66,6 +53,7 @@ public class DBFinal {
 
         public MovieRecommender() throws SQLException, IOException{
             createDB();
+            displayMenu();
         }
 
         //Method constructs DB
@@ -84,7 +72,7 @@ public class DBFinal {
             createUserTaggedMoviesTimestampTable();
             createUserTaggedMoviesTable();
             System.out.println("DB created.");
-
+            displayMenu();
         }
 
         private void createMoviesTable(){
@@ -326,7 +314,7 @@ public class DBFinal {
         }
 
         private void createMovieTagsTable() {
-            System.out.println("Creating table: movie_tags");
+            System.out.println("Creating table: movie_tags.....");
             String movieTagsTable = "create table if not exists movie_tags ("
                                         + "movieID      int     not null,"
                                         + "tagID        int,"
@@ -378,7 +366,7 @@ public class DBFinal {
                         }
                         //finish sql statement
                         sql += ");";
-                        System.out.println(sql);
+                        //System.out.println(sql);
                         try {
                             stmt.executeUpdate(sql);
                         } catch (SQLException ex) {
@@ -405,6 +393,88 @@ public class DBFinal {
             }catch (Exception e){
                 //Val is not int. cant be parsed
                 return false;
+            }
+        }
+
+        private void query(int x) {
+            //
+            switch(x){
+                case 1: System.out.print("\tHow many movies?");
+                        query1(scan.nextInt());
+                        break;
+                case 2:
+                        break;
+                case 3:
+                        break;
+                case 4:
+                        break;
+                case 5:
+                        break;
+                case 6:
+                        break;
+                case 7:
+                        break;
+                case 8:
+                        break;
+                case 9:
+                        break;
+
+            }
+            System.out.print("\tselection: ");
+            try{
+                query(scan.nextInt());
+                System.out.println();
+            }catch (InputMismatchException ime){
+                //System.out.print("Done?");
+                System.exit(0);
+            }
+            
+        }
+
+        private void displayMenu() {
+            System.out.println();
+            String menu = "*********Movie Recommender 3000***********\n"+
+                          "\t1\n"+
+                          "\t2\n"+
+                          "\t3\n"+
+                          "\t4\n"+
+                          "\t5\n"+
+                          "\t6\n"+
+                          "\t7\n"+
+                          "\t8\n"+
+                          "\t9\n"+
+                          "\t10 display GUI\n"+
+                          "\t0 display menu"+"\n\n"+
+                          "\tEnter q to exit"+"\n"+
+                        "*******************************************";
+            System.out.print(menu + "\n\t selection: ");
+            try{
+                query(scan.nextInt());
+            }catch (InputMismatchException ime){
+                //System.out.println("Done?");
+                System.exit(0);
+            }
+            
+        }
+
+        private void query1(int n) {
+            try {
+                
+                //Query1
+                System.out.println("\n\n");
+                String sql = "select m.title, m.year, m.rtAudienceScore, m.rtPictureURL, m.imdbPictureURL "
+                        + "from movies m "
+                        + "order by rtAudienceScore desc "
+                        + "limit " + n;
+                
+                ResultSet rs = stmt.executeQuery(sql);
+                System.out.println("Title" + "\t" + "Year" + "\t" + "RT Audience Score" + "\t" + "RT Pic URL" + "\t" + "Imdb Pic URL");
+                while (rs.next()) {
+                    System.out.println(rs.getString("title") + "\t" + rs.getInt("year") + "\t" + rs.getDouble("rtAudienceScore") + "\t" + rs.getString("rtPictureURL") + "\t" + rs.getString("imdbPictureURL"));
+                }
+                
+            } catch (SQLException ex) {
+                
             }
         }
     }
