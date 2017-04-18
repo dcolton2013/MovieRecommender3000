@@ -26,8 +26,8 @@ public class DBFinal {
 	private static final String password = "drc_DB2016";
 
   private static Connection conn;
-	private static Statement stmt;
-	private static ResultSet rs;
+  private static Statement stmt;
+  private static ResultSet rs;
   private static String query;
   private static BufferedReader br;
 
@@ -72,17 +72,17 @@ public class DBFinal {
         private void createDB() throws SQLException, IOException {
             System.out.println("Initializing DB:");
             createMoviesTable();
-//            createMovieTagsTable();
+            createMovieTagsTable();
             createMovieGenresTable();
             createMovieDirectorsTable();
             createMovieActorsTable();
-//            createMovieCountriesTable();
+            createMovieCountriesTable();
             createMovieLocationsTable();
             createTagsTable();
             createUserRatedTimestampTable();
-//            createRatedMoviesTable();
-//            createTaggedTimestampTable();
-//            createTaggedMoviesTable();
+            createUserRatedMoviesTable();
+            createUserTaggedMoviesTimestampTable();
+            createUserTaggedMoviesTable();
             System.out.println("DB created.");
 
         }
@@ -90,7 +90,7 @@ public class DBFinal {
         private void createMoviesTable(){
             System.out.println("Creating Table: movies...");
             //init table
-            String moviesTable = "create table movies ("
+            String moviesTable = "create table if not exists movies ("
                                     + "id               		int			not null,"
                                     + "title                    	varchar(250),"
                                     + "imdbID				int,"
@@ -115,14 +115,14 @@ public class DBFinal {
                                     + "primary key (id));";
             try {
                 stmt.executeUpdate(moviesTable);
-            } catch (SQLException ex) {
-                //update movies
-                //ex.printStackTrace();
-            }
-
-            try {
+                
                 br = new BufferedReader(new FileReader("movies.dat"));
+                
+                populateDB("movies", br);
             } catch (FileNotFoundException ex) {
+                
+            } catch (SQLException ex) {
+
             }
             populateDB("movies", br);
 //            Query1
@@ -141,7 +141,7 @@ public class DBFinal {
         private void createMovieGenresTable() {
             System.out.println("Creating Table: movie_genres.....");
             //init
-            String movieGenresTable = "create table movie_genres ("
+            String movieGenresTable = "create table if not exist movie_genres ("
                                         + "movieID		int		not null,"
                                         + "genre 		varchar(70),"
                                         + "primary key(movieID, genre));";
@@ -161,7 +161,7 @@ public class DBFinal {
 
         private void createMovieDirectorsTable() {
             System.out.println("Creating Table: movie_directors....");
-            String movieDirectorsTable = "create table movie_directors ("
+            String movieDirectorsTable = "create table if not exists movie_directors ("
                                             + "movieID          int		not null,"
                                             + "directorID       varchar(100),"
                                             + "directorName	varchar(100),"
@@ -173,12 +173,11 @@ public class DBFinal {
             } catch (FileNotFoundException ex) {
             } catch (SQLException ex) {
             }
-
-            populateDB("movie_directors",br);
         }
 
         private void createMovieActorsTable() {
-            String movieActorsTable = "create table movie_actors ("
+            System.out.println("Creating Table: movie_actors.....");
+            String movieActorsTable = "create table if not exists movie_actors ("
                                         + "movieID              int		not null,"
                                         + "actorID 		varchar(100),"
                                         + "actorName            varchar(100),"
@@ -196,7 +195,7 @@ public class DBFinal {
 
         private void createTagsTable() {
             System.out.println("Creating Table: tags....");
-            String tagsTable = "create table tags ("
+            String tagsTable = "create table if not exist tags ("
                                 + "id       int     not null,"
                                 + "value    varchar(255),"
                                 + "primary key (id));";
@@ -211,7 +210,7 @@ public class DBFinal {
 
         private void createUserRatedTimestampTable() {
             System.out.println("Creating Table: user_ratedmovies_timestamps....");
-            String userRatedMoviesTimestampTable = "create table user_ratedmovies_timestamps ("
+            String userRatedMoviesTimestampTable = "create table if not exist user_ratedmovies_timestamps ("
                                                     + "userID           int	not null,"
                                                     + "movieID          int,"
                                                     + "rating  		double,"
@@ -227,23 +226,24 @@ public class DBFinal {
         }
 
         private void createMovieCountriesTable() {
-		System.out.println("Createing Table: moive_countries....");
-		String movieCountriesTable = "create table move_countries ("
-						+ "movieID	int	not null,"
-						+ "country	varchar(50),"
-						+ "primary key (movieID, country));";
-		try{
-			stmt.executeUpdate(movieCountriesTable);
-			br = new BufferedReader(new FileReader("movie_countres.dat"));
-		} catch (FileNotFoundException ex){
-		} catch (SQLException ex){
-		}
-		populateDB("movie_countries", br);
+
+            System.out.println("Creating Table: movie_countries....");
+            String movieCountriesTable = "create table if not exist movie_countries ("
+                                            + "movieID      int     not null,"
+                                            + "country      varchar(50),"
+                                            + "primary key (movieID));";
+            try {
+                stmt.executeUpdate(movieCountriesTable);
+                br = new BufferedReader(new FileReader("movie_countries.dat"));
+                populateDB("movie_countries",br);
+            } catch (FileNotFoundException ex) {
+            } catch (SQLException ex) {
+            }
         }
 
         private void createMovieLocationsTable() {
             System.out.println("Creating Table: movie_locations....");
-            String movieLocationsTable = "create table movie_locations ("
+            String movieLocationsTable = "create table if not exist movie_locations ("
                                             + "movieID		int		not null,"
                                             + "location1 	varchar(100),"
                                             + "location2	varchar(100),"
@@ -260,37 +260,86 @@ public class DBFinal {
         }
 
         private void createUserRatedMoviesTable() {
-		System.out.println("Create Table: user_ratedmovies....");
-		String userRatedMoviesTable = "create table user_ratedmovies ("
-						+ "userID	int	not null,"
-						+ "movieID	int	not null,"
-						+ "rating	int,"
-						+ "date_day	varchar(9),"
-						+ "date_month	varchar(9),"
-						+ "date_year	int,"
-						+ "date_hour	int,"
-						+ "date_minute	int,"
-						+ "date_second	int,"
-						+ "primary key (userID, movieID));";
-		try{
-			stmt.executeUpdate(userRatedMoviesTable);
-			br = new BufferedReader(new FileReader("user_ratedmovies.dat"));
-		} catch (FileNotFoundException ex) {
-		} catch (SQLException ex){
-		}
-		populateDB("user_ratedmovies", br);
+            System.out.println("Creating Table: user_ratedmovies....");
+            String userRatedMoviesTable = "create table if not exist user_ratedmovies ("
+                                                + "userID		int         not null,"
+                                                + "movieID		int,"
+                                                + "rating		double,"
+                                                + "date_day		int,"
+                                                + "date_month		int,"
+                                                + "date_year		int,"
+                                                + "date_hour            int,"
+                                                + "date_minute          int,"
+                                                + "date_second		int,"
+                                                + "primary key (userID, movieID));";
+            try {
+                stmt.executeUpdate(userRatedMoviesTable);
+                br = new BufferedReader(new FileReader("user_ratedmovies.dat"));
+                populateDB("user_ratedmovies",br);
+            } catch (FileNotFoundException ex) {
+            } catch (SQLException ex) {
+            }
         }
 
-        private void createTaggedTimestampTable() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        private void createUserTaggedMoviesTimestampTable() {
+            System.out.println("Creating Table: user_taggedmovies_timestamp.... ");
+            String userTaggedMoviesTimestampTable = "create table if not exist user_taggedmovies ("
+                                                + "userID		int 	not null,"
+                                                + "movieID		int,"
+                                                + "tagID		int,"
+                                                + "date_day		int,"
+                                                + "date_month		int,"
+                                                + "date_year		int,"
+                                                + "date_hour		int,"
+                                                + "date_minute		int,"
+                                                + "date_second		int,"
+                                                + "primary key (userID, movieID, tagID));";
+            try {
+                stmt.executeUpdate(userTaggedMoviesTimestampTable);
+                br = new BufferedReader(new FileReader("user_taggedmovies-timestamp.dat"));
+                populateDB("user_taggedmovies_timestamp",br);
+            } catch (FileNotFoundException ex) {
+            } catch (SQLException ex) {
+            }
         }
 
-        private void createTaggedMoviesTable() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        private void createUserTaggedMoviesTable() {
+            System.out.println("Creating Table: user_taggedmovies.....");
+            String userTaggedMoviesTable= "create table if not exists user_taggedmovies ("
+                                                + "userID	int     not null,"
+                                                + "movieID      int,"
+                                                + "tagID        int,"
+                                                + "date_day	int,"
+                                                + "date_month   int,"
+                                                + "date_year    int,"
+                                                + "date_hour	int,"
+                                                + "date_minute  int,"
+                                                + "date_second	int,"
+                                                + "primary key (userID, movieID, tagID));";
+            try {
+                stmt.executeUpdate(userTaggedMoviesTable);
+                br = new BufferedReader(new FileReader("user_taggedmovies.dat"));
+                populateDB("user_taggedmovies",br);
+            } catch (FileNotFoundException ex) {
+            } catch (SQLException ex) {
+            }
         }
 
         private void createMovieTagsTable() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            System.out.println("Creating table: movie_tags");
+            String movieTagsTable = "create table if not exists movie_tags ("
+                                        + "movieID      int     not null,"
+                                        + "tagID        int,"
+                                        + "tagWeight    int,"
+                                        + "primary key (movieID, tagID));";
+            try {
+                stmt.executeUpdate(movieTagsTable);
+                br = new BufferedReader(new FileReader("movie_tags.dat"));
+                populateDB("movie_tags",br);
+            } catch (FileNotFoundException ex) {
+            } catch (SQLException ex) {
+            }
+
         }
 
         private void populateDB(String table, BufferedReader br){
@@ -329,7 +378,7 @@ public class DBFinal {
                         }
                         //finish sql statement
                         sql += ");";
-                        //System.out.println(sql);
+                        System.out.println(sql);
                         try {
                             stmt.executeUpdate(sql);
                         } catch (SQLException ex) {
