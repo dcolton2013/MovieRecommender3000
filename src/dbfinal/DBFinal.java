@@ -23,7 +23,7 @@ public class DBFinal {
 
   private static final String url = "jdbc:mysql://localhost:3306/movieRecommender3000?useSSL=false";
 	private static final String user = "root";
-	private static final String password = "drc_DB2016";
+	private static final String password = "*";
 
   private static Connection conn;
   private static Statement stmt;
