@@ -217,6 +217,7 @@ public class DBFinal {
         }
 
         private void createMovieCountriesTable() {
+<<<<<<< HEAD
             System.out.println("Creating Table: movie_countries....");
             String movieCountriesTable = "create table movie_countries ("
                                             + "movieID      int     not null,"
@@ -229,6 +230,20 @@ public class DBFinal {
             } catch (FileNotFoundException ex) {
             } catch (SQLException ex) {
             }
+=======
+		System.out.println("Createing Table: moive_countries....");
+		String movieCountriesTable = "create table move_countries ("
+						+ "movieID	int	not null,"
+						+ "country	varchar(50),"
+						+ "primary key (movieID, country));";
+		try{
+			stmt.executeUpdate(movieCountriesTable);
+			br = new BufferedReader(new FileReader("movie_countres.dat"));
+		} catch (FileNotFoundException ex){
+		} catch (SQLException ex){
+		}
+		populateDB("movie_countries", br);
+>>>>>>> 85018c39ccdfd65228c3fd88f1273e16bb296424
         }
 
         private void createMovieLocationsTable() {
