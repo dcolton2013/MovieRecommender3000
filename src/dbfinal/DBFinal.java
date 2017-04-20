@@ -23,7 +23,7 @@ public class DBFinal {
 
   private static final String url = "jdbc:mysql://localhost:3306/movieRecommender3000?useSSL=false";    
   private static final String user = "root";
-  private static final String password = "drc_DB2016";
+  private static final String password = "password";
 
   private static Connection conn;
   private static Statement stmt;
@@ -59,18 +59,18 @@ public class DBFinal {
         //Method constructs DB
         private void createDB() throws SQLException, IOException {
             System.out.println("Initializing DB:");
-            createMoviesTable();
-            createMovieTagsTable();
-            createMovieGenresTable();
-            createMovieDirectorsTable();
-            createMovieActorsTable();
+//            createMoviesTable();
+//            createMovieTagsTable();
+//            createMovieGenresTable();
+//            createMovieDirectorsTable();
+//            createMovieActorsTable();
             createMovieCountriesTable();
-            createMovieLocationsTable();
+//            createMovieLocationsTable();
             createTagsTable();
             createUserRatedTimestampTable();
-            createUserRatedMoviesTable();
+//            createUserRatedMoviesTable();
             createUserTaggedMoviesTimestampTable();
-            createUserTaggedMoviesTable();
+//            createUserTaggedMoviesTable();
             System.out.println("DB created.");
             displayMenu();
         }
@@ -129,15 +129,13 @@ public class DBFinal {
         private void createMovieGenresTable() {
             System.out.println("Creating Table: movie_genres.....");
             //init
-            String movieGenresTable = "create table if not exist movie_genres ("
-                                        + "movieID		int		not null,"
-                                        + "genre 		varchar(70),"
+            String movieGenresTable = "create table if not exists movie_genres ( "
+                                        + "movieID		int		not null, "
+                                        + "genre 		varchar(70), "
                                         + "primary key(movieID, genre));";
             try {
                 stmt.executeUpdate(movieGenresTable);
-            } catch (SQLException ex) {
-                //update movies
-            }
+            } catch (SQLException ex) {}
 
             try {
                 br = new BufferedReader(new FileReader("movie_genres.dat"));
@@ -183,7 +181,7 @@ public class DBFinal {
 
         private void createTagsTable() {
             System.out.println("Creating Table: tags....");
-            String tagsTable = "create table if not exist tags ("
+            String tagsTable = "create table if not exists tags ("
                                 + "id       int     not null,"
                                 + "value    varchar(255),"
                                 + "primary key (id));";
@@ -198,7 +196,7 @@ public class DBFinal {
 
         private void createUserRatedTimestampTable() {
             System.out.println("Creating Table: user_ratedmovies_timestamps....");
-            String userRatedMoviesTimestampTable = "create table if not exist user_ratedmovies_timestamps ("
+            String userRatedMoviesTimestampTable = "create table if not exists user_ratedmovies_timestamps ("
                                                     + "userID           int	not null,"
                                                     + "movieID          int,"
                                                     + "rating  		double,"
@@ -216,7 +214,7 @@ public class DBFinal {
         private void createMovieCountriesTable() {
 
             System.out.println("Creating Table: movie_countries....");
-            String movieCountriesTable = "create table if not exist movie_countries ("
+            String movieCountriesTable = "create table if not exists movie_countries ("
                                             + "movieID      int     not null,"
                                             + "country      varchar(50),"
                                             + "primary key (movieID));";
@@ -231,7 +229,7 @@ public class DBFinal {
 
         private void createMovieLocationsTable() {
             System.out.println("Creating Table: movie_locations....");
-            String movieLocationsTable = "create table if not exist movie_locations ("
+            String movieLocationsTable = "create table if not exists movie_locations ("
                                             + "movieID		int		not null,"
                                             + "location1 	varchar(100),"
                                             + "location2	varchar(100),"
@@ -249,7 +247,7 @@ public class DBFinal {
 
         private void createUserRatedMoviesTable() {
             System.out.println("Creating Table: user_ratedmovies....");
-            String userRatedMoviesTable = "create table if not exist user_ratedmovies ("
+            String userRatedMoviesTable = "create table if not exists user_ratedmovies ("
                                                 + "userID		int         not null,"
                                                 + "movieID		int,"
                                                 + "rating		double,"
@@ -271,7 +269,7 @@ public class DBFinal {
 
         private void createUserTaggedMoviesTimestampTable() {
             System.out.println("Creating Table: user_taggedmovies_timestamp.... ");
-            String userTaggedMoviesTimestampTable = "create table if not exist user_taggedmovies ("
+            String userTaggedMoviesTimestampTable = "create table if not exists user_taggedmovies ("
                                                 + "userID		int 	not null,"
                                                 + "movieID		int,"
                                                 + "tagID		int,"
