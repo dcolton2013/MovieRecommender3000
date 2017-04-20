@@ -24,7 +24,7 @@ public class DBFinal {
         Class.forName("com.mysql.jdbc.Driver");
         conn = DriverManager.getConnection(url, user, password);
         System.out.println("Database connected successfully");
-        System.out.println("Movie Recommender 3000");
+        System.out.println("new_recommender");
         // Statement object to execute query
         stmt = conn.createStatement();
         MovieRecommender rec = new MovieRecommender();
@@ -45,6 +45,13 @@ public class DBFinal {
         //Method constructs DB
         private void createDB() throws SQLException, IOException {
             System.out.println("Initializing DB:");
+            
+            try {
+                stmt.executeUpdate("create schema if not exists new_recommender;");
+//                stmt.executeUpdate("use new_recommender;");
+            } catch (SQLException ex) {
+            }
+            
             createMoviesTable();
             createMovieTagsTable();
             createMovieGenresTable();
@@ -87,11 +94,14 @@ public class DBFinal {
                                     + "primary key (id));";
             try {
                 stmt.executeUpdate(moviesTable);
-                br = new BufferedReader(new FileReader("movies.dat"));
-            } catch (FileNotFoundException | SQLException ex) {
+//                stmt.executeUpdate(
+//                        "LOAD DATA LOCAL INFILE 'C:/Users/nicma/GitRepos/MovieRecommender3000-v1/src/dbfinal/movies.dat' INTO TABLE movies;"
+//                );
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
             
-            populateDB("movies", br);
+            populateDB("movies.dat", "movies");
         }
 
         private void createMovieGenresTable() {
@@ -103,12 +113,11 @@ public class DBFinal {
                                         + "primary key(movieID, genre));";
             try {
                 stmt.executeUpdate(movieGenresTable);
-                br = new BufferedReader(new FileReader("movie_genres.dat"));
-            } catch (SQLException | FileNotFoundException ex) {
-//                Logger.getLogger(DBFinal.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
             
-            populateDB("movie_genres",br);
+            populateDB("movie_genres.dat","movie_genres");
         }
 
         private void createMovieDirectorsTable() {
@@ -121,11 +130,11 @@ public class DBFinal {
 
             try {
                 stmt.executeUpdate(movieDirectorsTable);
-                br = new BufferedReader(new FileReader("movie_directors.dat"));
-            } catch (FileNotFoundException | SQLException ex) {
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             } 
             
-            populateDB("movie_directors", br);
+            populateDB("movie_directors.dat","movie_directors");
 
         }
 
@@ -139,11 +148,11 @@ public class DBFinal {
                                         + "primary key (actorID, movieID));";
             try {
                 stmt.executeUpdate(movieActorsTable);
-                br = new BufferedReader(new FileReader("movie_actors.dat"));
-            } catch (FileNotFoundException | SQLException ex) {
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
 
-            populateDB("movie_actors",br);
+            populateDB("movie_actors.dat","movie_actors");
         }
 
         private void createTagsTable() {
@@ -154,11 +163,11 @@ public class DBFinal {
                                 + "primary key (id));";
             try {
                 stmt.executeUpdate(tagsTable);
-                br = new BufferedReader(new FileReader("tags.dat"));
-            } catch (FileNotFoundException | SQLException ex) {
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
             
-            populateDB("tags",br);
+            populateDB("tags.dat","tags");
         }
 
         private void createUserRatedTimestampTable() {
@@ -171,11 +180,11 @@ public class DBFinal {
                                                     + "primary key (userID, movieID));";
             try {
                 stmt.executeUpdate(userRatedMoviesTimestampTable);
-                br = new BufferedReader(new FileReader("user_ratedmovies-timestamps.dat"));
-            } catch (FileNotFoundException | SQLException ex) {
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
             
-            populateDB("user_ratedmovies_timestamps",br);
+            populateDB("user_ratedmovies-timestamps.dat","user_ratedmovies_timestamps");
         }
 
         private void createMovieCountriesTable() {
@@ -187,11 +196,11 @@ public class DBFinal {
                                             + "primary key (movieID));";
             try {
                 stmt.executeUpdate(movieCountriesTable);
-                br = new BufferedReader(new FileReader("movie_countries.dat"));
-            } catch (FileNotFoundException | SQLException ex) {
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
             
-            populateDB("movie_countries",br);
+            populateDB("movie_countries.dat","movie_countries");
         }
 
         private void createMovieLocationsTable() {
@@ -205,11 +214,11 @@ public class DBFinal {
                                             + "primary key (movieID, location1, location2, location3, location4));";
             try {
                 stmt.executeUpdate(movieLocationsTable);
-                br = new BufferedReader(new FileReader("movie_locations.dat"));
-            } catch (FileNotFoundException | SQLException ex) {
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
             
-            populateDB("movie_locations",br);
+            populateDB("movie_locations.dat","movie_locations");
         }
 
         private void createUserRatedMoviesTable() {
@@ -227,11 +236,11 @@ public class DBFinal {
                                                 + "primary key (userID, movieID));";
             try {
                 stmt.executeUpdate(userRatedMoviesTable);
-                br = new BufferedReader(new FileReader("user_ratedmovies.dat"));
-            } catch (FileNotFoundException | SQLException ex) {
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
             
-            populateDB("user_ratedmovies",br);
+            populateDB("user_ratedmovies.dat","user_ratedmovies");
         }
 
         private void createUserTaggedMoviesTimestampTable() {
@@ -244,12 +253,11 @@ public class DBFinal {
                                                     + "primary key (userID, movieID));";
             try {
                 stmt.executeUpdate(userTaggedMoviesTimestampTable);
-                br = new BufferedReader(new FileReader("user_taggedmovies-timestamps.dat"));
-            } catch (FileNotFoundException | SQLException ex) {
-                System.out.println("\n\nNot happening bro: 254");
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
             
-            populateDB("user_taggedmovies_timestamps",br);
+            populateDB("user_taggedmovies-timestamps.dat","user_taggedmovies_timestamps");
         }
 
         private void createUserTaggedMoviesTable() {
@@ -267,11 +275,11 @@ public class DBFinal {
                                                 + "primary key (userID, movieID, tagID));";
             try {
                 stmt.executeUpdate(userTaggedMoviesTable);
-                br = new BufferedReader(new FileReader("user_taggedmovies.dat"));
-            } catch (FileNotFoundException | SQLException ex) {
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
             
-            populateDB("user_taggedmovies",br);
+            populateDB("user_taggedmovies.dat","user_taggedmovies");
         }
 
         private void createMovieTagsTable() {
@@ -283,76 +291,22 @@ public class DBFinal {
                                         + "primary key (movieID, tagID));";
             try {
                 stmt.executeUpdate(movieTagsTable);
-                br = new BufferedReader(new FileReader("movie_tags.dat"));
-            } catch (FileNotFoundException | SQLException ex) {
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
             
-            populateDB("movie_tags",br);
+            populateDB("movie_tags.dat","movie_tags");
 
         }
         
-        private void populateDB(String table, BufferedReader br){
+        private void populateDB(String fileName, String table) {
+            
+            String populate = "LOAD DATA LOCAL INFILE 'C:/Users/nicma/GitRepos/MovieRecommender3000-v1/src/dbfinal/" + fileName + "' INTO TABLE " + table + ";";
+            
             try {
-                //holds the current line in br
-                String line;
-                //holds the sql statement
-                String sql;
-                //number of attributess for each tuple (splits on any whitespace chars)
-                int count = br.readLine().split("\\s+").length;
-
-                //for loop will loop until br line is null
-                while ((line = br.readLine()) != null) {
-                    //pick up tuple values
-                    String[] tuple = line.split("\t");
-                    //System.out.println(""+count+ ""+tuple.length);
-                    //verify this tuple can be inserted in DB table
-                    if (tuple.length == count) {
-                        //build sql stmt
-                        sql = "insert into " + table +" values (";
-                        for (int i=0;i<tuple.length; i++){
-                            String val = tuple[i];
-                            int index = val.indexOf("'");
-
-                            if (index >= 0)
-                                val = val.substring(0,index) + "''" + val.substring(index+1);
-
-                            if (isInt(val))
-                                sql += Integer.parseInt(val);
-                            else
-                                sql += "\'"+val+"\'";
-
-                            if (i != tuple.length - 1)
-                                sql += ",";
-                        }
-                        //finish sql statement
-                        sql += ");";
-                        System.out.println(sql);
-                        try {
-                            stmt.executeUpdate(sql);
-                        } catch (SQLException ex) {
-                            ex.getLocalizedMessage();
-                        }
-                    }else {
-                    }
-                }
-                br.close();
-            //////////////////////////////////////////
-            } catch (IOException ex) {
-            }
-        }
-
-        //method checks whether val is int
-        //if false val should be surronded with
-        //single quotes when inserted into db
-        private boolean isInt(String val) {
-            int x;
-            try{
-                //val is int
-                x = Integer.parseInt(val);
-                return true;
-            }catch (NumberFormatException e){
-                //Val is not int. cant be parsed
-                return false;
+                stmt.executeUpdate(populate);
+            } catch (SQLException ex) {
+                System.out.println(ex.toString());
             }
         }
     }
