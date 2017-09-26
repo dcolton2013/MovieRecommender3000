@@ -50,9 +50,9 @@ Data statistics
          avg. 84.637 ratings per movie
 
 -----
-Files
+Files can be found here: src/movierecommender/data
 -----
-
+    
    * movies.dat
    
    	This file contains information about the movies of the database, including: 
